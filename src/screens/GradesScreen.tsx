@@ -36,6 +36,7 @@ export const GradesScreen: React.FC<{ navigation: any; route: any }> = ({ naviga
   const selectedSubject = subjects.find(s => s.id === selectedSubjectId);
   const overallAverage = calculateOverallAverage(subjects);
   const patterns = analyzePatterns(subjects);
+  const subjectPatterns = selectedSubject ? analyzePatterns([selectedSubject]) : [];
 
   const handleAddSubject = () => {
     if (newSubjectName.trim()) {
@@ -94,6 +95,23 @@ export const GradesScreen: React.FC<{ navigation: any; route: any }> = ({ naviga
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
+          {/* AI Insights for Subject */}
+          {subjectPatterns.length > 0 && (
+            <Animated.View entering={FadeInDown.delay(100)}>
+              <Card style={[styles.subjectInsightCard, { backgroundColor: theme.primary + '10', borderColor: theme.primary + '30' }]}>
+                <View style={styles.insightHeader}>
+                  <View style={[styles.insightIcon, { backgroundColor: theme.primary + '20' }]}>
+                    <Ionicons name="bulb" size={20} color={theme.primary} />
+                  </View>
+                  <Text style={[styles.insightTitle, { color: theme.primary }]}>Tutor Recommendation</Text>
+                </View>
+                <Text style={[styles.insightText, { color: theme.textSecondary }]}>
+                  {subjectPatterns[0]}
+                </Text>
+              </Card>
+            </Animated.View>
+          )}
+
           {/* Subject Stats */}
           <Card style={styles.subjectStatsCard}>
             <View style={styles.subjectStatsRow}>
@@ -492,6 +510,11 @@ const styles = StyleSheet.create({
     marginTop: 16,
     padding: 24,
   },
+  subjectInsightCard: { padding: 20, marginHorizontal: 20, marginBottom: 20, borderStyle: 'dashed' },
+  insightHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12, gap: 10 },
+  insightIcon: { width: 36, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
+  insightTitle: { fontSize: 16, fontWeight: '800' },
+  insightText: { fontSize: 14, lineHeight: 22, fontWeight: '500' },
   subjectStatsRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',

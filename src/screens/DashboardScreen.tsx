@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, RefreshControl, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ import { SubjectCard } from '@/components/SubjectCard';
 import { MiniChart } from '@/components/MiniChart';
 import { UpgradeModal } from '@/components/UpgradeModal';
 import { QuickStudyModal } from '@/components/QuickStudyModal';
+import { MilestoneModal } from '@/components/MilestoneModal';
 import { Logo } from '@/components/Logo';
 import { calculateOverallAverage, formatTime, generateProjectedGrade, getWeakestSubject } from '@/lib/utils';
 import { mockParentData } from '@/lib/mockData';
@@ -22,6 +23,8 @@ export const DashboardScreen: React.FC<{ navigation: any }> = ({ navigation }) =
   const [refreshing, setRefreshing] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showQuickStudy, setShowQuickStudy] = useState(false);
+  const [showMilestone, setShowMilestone] = useState(false);
+  const [milestoneData, setMilestoneData] = useState({ title: '', message: '', xpReward: 0, type: 'streak' as const });
 
   const overallAverage = calculateOverallAverage(subjects);
   const projectedGrade = generateProjectedGrade(overallAverage, user.weeklyStudyTime / 60);
@@ -31,6 +34,20 @@ export const DashboardScreen: React.FC<{ navigation: any }> = ({ navigation }) =
     setRefreshing(true);
     setTimeout(() => setRefreshing(false), 1000);
   };
+
+  useEffect(() => {
+    // Check for streak milestone
+    if (user.studyStreak === 7 && !user.unlockedAchievements.includes('7-day-streak')) {
+      setMilestoneData({
+        title: '7-Day Streak!',
+        message: 'You\'ve studied for 7 days in a row. You\'re on fire!',
+        xpReward: 500,
+        type: 'streak'
+      });
+      setShowMilestone(true);
+      // unlockAchievement('7-day-streak'); // Assuming this exists in store
+    }
+  }, [user.studyStreak]);
 
   const gradeHistory = mockParentData.gradeHistory.map(g => g.average);
 
@@ -170,6 +187,11 @@ export const DashboardScreen: React.FC<{ navigation: any }> = ({ navigation }) =
 
       <UpgradeModal visible={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} />
       <QuickStudyModal visible={showQuickStudy} onClose={() => setShowQuickStudy(false)} />
+      <MilestoneModal 
+        visible={showMilestone} 
+        onClose={() => setShowMilestone(false)} 
+        {...milestoneData} 
+      />
     </SafeAreaView>
   );
 };

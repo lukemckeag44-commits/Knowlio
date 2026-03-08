@@ -330,7 +330,9 @@ export const useAppStore = create<AppState>()(
 interface AuthState {
   userEmail: string | null;
   isLoggedIn: boolean;
+  hasOnboarded: boolean;
   setLogin: (email: string) => Promise<void>;
+  setHasOnboarded: (value: boolean) => void;
   logout: () => Promise<void>;
 }
 
@@ -339,6 +341,7 @@ export const useAuthStore = create<AuthState>()(
     (set: any) => ({
       userEmail: null,
       isLoggedIn: false,
+      hasOnboarded: false,
 
       setLogin: async (email: string) => {
         if (Platform.OS === 'web') {
@@ -352,6 +355,8 @@ export const useAuthStore = create<AuthState>()(
         }
         set({ userEmail: email, isLoggedIn: true });
       },
+
+      setHasOnboarded: (value: boolean) => set({ hasOnboarded: value }),
 
       logout: async () => {
         if (Platform.OS === 'web') {

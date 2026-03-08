@@ -23,6 +23,7 @@ import { UpgradeScreen } from './src/screens/UpgradeScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { LeaderboardScreen } from './src/screens/LeaderboardScreen';
 import LoginScreen from './src/screens/LoginScreen';
+import { OnboardingScreen } from './src/screens/OnboardingScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -132,7 +133,10 @@ function LoadingScreen() {
 }
 
 export default function App() {
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const { isLoggedIn, hasOnboarded } = useAuthStore((state) => ({ 
+    isLoggedIn: state.isLoggedIn, 
+    hasOnboarded: state.hasOnboarded 
+  }));
   const { darkMode } = useAppStore();
   const theme = useTheme();
 
@@ -164,6 +168,8 @@ export default function App() {
           >
             {!isLoggedIn ? (
               <Stack.Screen name="Login" component={LoginScreen} />
+            ) : !hasOnboarded ? (
+              <Stack.Screen name="Onboarding" component={OnboardingScreen} />
             ) : (
               <>
                 <Stack.Screen name="Main" component={TabNavigator} />
