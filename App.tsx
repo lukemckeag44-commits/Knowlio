@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Text, ActivityIndicator, Image } from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -38,15 +38,19 @@ function TabNavigator() {
           backgroundColor: theme.card,
           borderTopWidth: 1,
           borderTopColor: theme.border,
-          paddingTop: 8,
-          paddingBottom: 8,
-          height: 70,
+          paddingTop: 10,
+          paddingBottom: 10,
+          height: 75,
+          ...Platform.select({
+            ios: { shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: -4 } },
+            android: { elevation: 8 },
+          }),
         },
         tabBarActiveTintColor: theme.primary,
         tabBarInactiveTintColor: theme.textMuted,
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: '600',
+          fontWeight: '700',
           marginTop: 4,
         },
       }}
@@ -55,8 +59,8 @@ function TabNavigator() {
         name="Dashboard"
         component={DashboardScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" size={24} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name={focused ? "home" : "home-outline"} size={24} color={color} />
           ),
         }}
       />
@@ -64,8 +68,8 @@ function TabNavigator() {
         name="Grades"
         component={GradesScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="school" size={24} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name={focused ? "school" : "school-outline"} size={24} color={color} />
           ),
         }}
       />
@@ -73,8 +77,8 @@ function TabNavigator() {
         name="Analyze"
         component={AnalyzeScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="analytics" size={24} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name={focused ? "analytics" : "analytics-outline"} size={24} color={color} />
           ),
         }}
       />
@@ -83,8 +87,8 @@ function TabNavigator() {
         component={StudyPlanScreen}
         options={{
           tabBarLabel: 'Plan',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="calendar" size={24} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name={focused ? "calendar" : "calendar-outline"} size={24} color={color} />
           ),
         }}
       />
@@ -93,8 +97,8 @@ function TabNavigator() {
         component={LeaderboardScreen}
         options={{
           tabBarLabel: 'Ranks',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="trophy" size={24} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name={focused ? "trophy" : "trophy-outline"} size={24} color={color} />
           ),
         }}
       />
@@ -102,8 +106,8 @@ function TabNavigator() {
         name="Settings"
         component={SettingsScreen}
         options={{
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings" size={24} color={color} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <Ionicons name={focused ? "settings" : "settings-outline"} size={24} color={color} />
           ),
         }}
       />
@@ -117,19 +121,18 @@ function LoadingScreen() {
   return (
     <View style={[styles.loadingContainer, { backgroundColor: theme.background }]}>
       <View style={styles.logoContainer}>
-        {/* Fallback to text if Logo fails or fonts aren't ready */}
-        <Text style={[styles.logoText, { fontSize: 48, color: theme.text }]}>K</Text>
+        <Logo size={120} />
         <Text style={[styles.logoText, { color: theme.text }]}>Knowlio</Text>
-        <Text style={[styles.tagline, { color: theme.textSecondary }]}>Turn Your 70s Into 90s</Text>
+        <Text style={[styles.tagline, { color: theme.textSecondary }]}>Elevate Your Academic Potential</Text>
       </View>
-      <ActivityIndicator size="large" color={theme.primary} style={styles.loader} />
+      <ActivityIndicator size="small" color={theme.primary} style={styles.loader} />
     </View>
   );
 }
 
 export default function App() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const { isDarkMode } = useAppStore();
+  const { darkMode } = useAppStore();
   const theme = useTheme();
 
   const [fontsLoaded, fontError] = useFonts({
@@ -138,14 +141,12 @@ export default function App() {
     ...MaterialIcons.font,
   });
 
-  // Fallback: If fonts take more than 3 seconds on web, just proceed
   const [showAppAnyway, setShowAppAnyway] = React.useState(false);
   React.useEffect(() => {
     const timer = setTimeout(() => setShowAppAnyway(true), 3000);
     return () => clearTimeout(timer);
   }, []);
 
-  // If fonts take too long or fail, we still want to render the app on web
   if (!fontsLoaded && !fontError && !showAppAnyway) {
     return <LoadingScreen />;
   }
@@ -189,7 +190,7 @@ export default function App() {
               </>
             )}
           </Stack.Navigator>
-          <StatusBar style={isDarkMode ? "light" : "dark"} />
+          <StatusBar style={darkMode ? "light" : "dark"} />
         </NavigationContainer>
       </SafeAreaProvider>
     </GestureHandlerRootView>
@@ -199,30 +200,25 @@ export default function App() {
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
   },
   logoContainer: {
     alignItems: 'center',
   },
-  customLogo: {
-    width: 100,
-    height: 100,
-    resizeMode: 'contain',
-  },
   logoText: {
     fontSize: 32,
-    fontWeight: '700',
-    color: '#1F2937',
-    marginTop: 16,
+    fontWeight: '800',
+    marginTop: 20,
+    letterSpacing: -1,
   },
   tagline: {
     fontSize: 16,
-    color: '#6B7280',
+    fontWeight: '500',
     marginTop: 8,
+    opacity: 0.7,
   },
   loader: {
-    marginTop: 40,
+    marginTop: 48,
   },
 });

@@ -1,30 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { z } from 'zod';
 import { useAuthStore, useAppStore } from '../lib/store';
-import { PlanType } from '../lib/types';
 import { Ionicons } from '@expo/vector-icons';
-import Animated, { FadeInRight, FadeOutLeft } from 'react-native-reanimated';
+import Animated, { FadeInRight, FadeOutLeft, FadeIn } from 'react-native-reanimated';
 import { aiTutors } from '../lib/mockData';
 import { useTheme } from '../lib/useTheme';
 import { Logo } from '../components/Logo';
+import { Button } from '../components/Button';
 
 const emailSchema = z.string().email("Please enter a valid email address");
 
 export default function LoginScreen() {
     const [step, setStep] = useState(1);
-
-    // Step 1: Account
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    // Step 2: Personal
     const [name, setName] = useState('');
-
-    // Step 3: Grade
     const [grade, setGrade] = useState<number>(10);
-
-    // Step 4: Tutor
     const [selectedTutor, setSelectedTutorId] = useState<string>(aiTutors[0].id);
 
     const setLogin = useAuthStore((state) => state.setLogin);
@@ -64,20 +56,13 @@ export default function LoginScreen() {
 
     const completeLogin = async () => {
         try {
-            // Check domain for default student plan assignment (optional logic)
-            const isStudent = email.toLowerCase().endsWith('.edu') || email.includes('.cas');
-
-            // 1. Update Personalization Data in App Store
             updateUser({
                 name: name.trim(),
                 email: email.trim(),
                 grade: grade,
                 selectedTutor: selectedTutor,
             });
-
-            // 2. Trigger Auth Login (this changes the isLoggedIn state)
             await setLogin(email);
-
         } catch (error) {
             Alert.alert("Login Error", "Failed to complete setup.");
         }
@@ -86,7 +71,14 @@ export default function LoginScreen() {
     const renderStepIndicators = () => (
         <View style={styles.indicatorContainer}>
             {[1, 2, 3, 4].map(i => (
-                <View key={i} style={[styles.indicator, { backgroundColor: theme.border }, step >= i && [styles.indicatorActive, { backgroundColor: theme.primary }]]} />
+                <View 
+                    key={i} 
+                    style={[
+                        styles.indicator, 
+                        { backgroundColor: theme.border }, 
+                        step >= i && { backgroundColor: theme.primary, width: 24 }
+                    ]} 
+                />
             ))}
         </View>
     );
@@ -96,166 +88,308 @@ export default function LoginScreen() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={[styles.container, { backgroundColor: theme.background }]}
         >
-            <View style={[styles.card, { backgroundColor: theme.card, shadowColor: theme.shadow }]}>
-                {step > 1 && (
-                    <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-                        <Ionicons name="arrow-back" size={24} color={theme.textMuted} />
-                    </TouchableOpacity>
-                )}
+            <SafeAreaView style={styles.safeArea}>
+                <Animated.View 
+                    entering={FadeIn.duration(600)}
+                    style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}
+                >
+                    <View style={styles.cardHeader}>
+                        {step > 1 ? (
+                            <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+                                <Ionicons name="arrow-back" size={22} color={theme.textSecondary} />
+                            </TouchableOpacity>
+                        ) : <View style={{ width: 22 }} />}
+                        
+                        {renderStepIndicators()}
+                        
+                        <View style={{ width: 22 }} />
+                    </View>
 
-                {renderStepIndicators()}
+                    <ScrollView 
+                        showsVerticalScrollIndicator={false} 
+                        contentContainerStyle={styles.scrollContent}
+                        keyboardShouldPersistTaps="handled"
+                    >
+                        {step === 1 && (
+                            <Animated.View entering={FadeInRight} exiting={FadeOutLeft} style={styles.stepContainer}>
+                                <View style={styles.logoContainer}>
+                                    <Logo size={80} />
+                                    <Text style={[styles.brandName, { color: theme.primary }]}>Knowlio</Text>
+                                </View>
+                                <Text style={[styles.title, { color: theme.text }]}>Elevate Your Learning</Text>
+                                <Text style={[styles.subtitle, { color: theme.textSecondary }]}>Sign in to your personalized academic workspace</Text>
 
-                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1 }}>
-                    {step === 1 && (
-                        <Animated.View entering={FadeInRight} exiting={FadeOutLeft} style={styles.stepContainer}>
-                            <View style={styles.logoContainer}>
-                                <Logo size={120} />
-                            </View>
-                            <Text style={[styles.title, { color: theme.text }]}>Welcome to Knowlio</Text>
-                            <Text style={[styles.subtitle, { color: theme.textSecondary }]}>Sign in or create an account</Text>
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.inputLabel, { color: theme.textSecondary }]}>Email Address</Text>
+                                    <TextInput
+                                        style={[styles.input, { color: theme.text, backgroundColor: theme.input, borderColor: theme.border }]}
+                                        placeholder="e.g. alex@example.com"
+                                        value={email}
+                                        onChangeText={setEmail}
+                                        autoCapitalize="none"
+                                        keyboardType="email-address"
+                                        placeholderTextColor={theme.textMuted}
+                                    />
+                                </View>
 
-                            <TextInput
-                                style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-                                placeholder="Email Address"
-                                value={email}
-                                onChangeText={setEmail}
-                                autoCapitalize="none"
-                                keyboardType="email-address"
-                                placeholderTextColor={theme.textMuted}
-                            />
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.inputLabel, { color: theme.textSecondary }]}>Password</Text>
+                                    <TextInput
+                                        style={[styles.input, { color: theme.text, backgroundColor: theme.input, borderColor: theme.border }]}
+                                        placeholder="••••••••"
+                                        value={password}
+                                        onChangeText={setPassword}
+                                        secureTextEntry
+                                        placeholderTextColor={theme.textMuted}
+                                    />
+                                </View>
+                            </Animated.View>
+                        )}
 
-                            <TextInput
-                                style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-                                placeholder="Password"
-                                value={password}
-                                onChangeText={setPassword}
-                                secureTextEntry
-                                placeholderTextColor={theme.textMuted}
-                            />
-                        </Animated.View>
-                    )}
+                        {step === 2 && (
+                            <Animated.View entering={FadeInRight} exiting={FadeOutLeft} style={styles.stepContainer}>
+                                <Text style={[styles.title, { color: theme.text, textAlign: 'left' }]}>What's your name?</Text>
+                                <Text style={[styles.subtitle, { color: theme.textSecondary, textAlign: 'left' }]}>Your AI tutor will use this to personalize your experience.</Text>
 
-                    {step === 2 && (
-                        <Animated.View entering={FadeInRight} exiting={FadeOutLeft} style={styles.stepContainer}>
-                            <Text style={[styles.title, { color: theme.text }]}>Nice to meet you!</Text>
-                            <Text style={[styles.subtitle, { color: theme.textSecondary }]}>What should your AI tutor call you?</Text>
+                                <View style={styles.inputGroup}>
+                                    <Text style={[styles.inputLabel, { color: theme.textSecondary }]}>Preferred Name</Text>
+                                    <TextInput
+                                        style={[styles.input, { color: theme.text, backgroundColor: theme.input, borderColor: theme.border }]}
+                                        placeholder="Enter your name"
+                                        value={name}
+                                        onChangeText={setName}
+                                        autoCapitalize="words"
+                                        placeholderTextColor={theme.textMuted}
+                                        autoFocus
+                                    />
+                                </View>
+                            </Animated.View>
+                        )}
 
-                            <TextInput
-                                style={[styles.input, { color: theme.text, backgroundColor: theme.background, borderColor: theme.border }]}
-                                placeholder="First Name"
-                                value={name}
-                                onChangeText={setName}
-                                autoCapitalize="words"
-                                placeholderTextColor={theme.textMuted}
-                            />
-                        </Animated.View>
-                    )}
+                        {step === 3 && (
+                            <Animated.View entering={FadeInRight} exiting={FadeOutLeft} style={styles.stepContainer}>
+                                <Text style={[styles.title, { color: theme.text, textAlign: 'left' }]}>Current Grade</Text>
+                                <Text style={[styles.subtitle, { color: theme.textSecondary, textAlign: 'left' }]}>We'll tailor your study materials to your academic level.</Text>
 
-                    {step === 3 && (
-                        <Animated.View entering={FadeInRight} exiting={FadeOutLeft} style={styles.stepContainer}>
-                            <Text style={[styles.title, { color: theme.text }]}>What grade are you in?</Text>
-                            <Text style={[styles.subtitle, { color: theme.textSecondary }]}>We'll tailor your study plans accordingly.</Text>
+                                <View style={styles.grid}>
+                                    {[9, 10, 11, 12, 13].map(g => (
+                                        <TouchableOpacity
+                                            key={g}
+                                            activeOpacity={0.7}
+                                            style={[
+                                                styles.gridItem,
+                                                { borderColor: theme.border, backgroundColor: theme.input },
+                                                grade === g && { borderColor: theme.primary, backgroundColor: theme.primary + '10' }
+                                            ]}
+                                            onPress={() => setGrade(g)}
+                                        >
+                                            <Text style={[
+                                                styles.gridItemText, 
+                                                { color: theme.textSecondary }, 
+                                                grade === g && { color: theme.primary, fontWeight: '700' }
+                                            ]}>
+                                                {g === 13 ? 'College' : `Grade ${g}`}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+                            </Animated.View>
+                        )}
 
-                            <View style={styles.grid}>
-                                {[9, 10, 11, 12].map(g => (
+                        {step === 4 && (
+                            <Animated.View entering={FadeInRight} exiting={FadeOutLeft} style={styles.stepContainer}>
+                                <Text style={[styles.title, { color: theme.text, textAlign: 'left' }]}>Choose your AI Tutor</Text>
+                                <Text style={[styles.subtitle, { color: theme.textSecondary, textAlign: 'left' }]}>Select the personality that best fits your learning style.</Text>
+
+                                {aiTutors.map((tutor) => (
                                     <TouchableOpacity
-                                        key={g}
+                                        key={tutor.id}
+                                        activeOpacity={0.7}
                                         style={[
-                                            styles.gridItem,
-                                            { borderColor: theme.border, backgroundColor: theme.background },
-                                            grade === g && [styles.gridItemActive, { borderColor: theme.primary, backgroundColor: theme.primary + '20' }]
+                                            styles.tutorCard,
+                                            { borderColor: theme.border, backgroundColor: theme.input },
+                                            selectedTutor === tutor.id && { borderColor: theme.primary, backgroundColor: theme.primary + '10' }
                                         ]}
-                                        onPress={() => setGrade(g)}
+                                        onPress={() => setSelectedTutorId(tutor.id)}
                                     >
-                                        <Text style={[styles.gridItemText, { color: theme.textSecondary }, grade === g && [styles.gridItemTextActive, { color: theme.primary }]]}>
-                                            Grade {g}
-                                        </Text>
+                                        <View style={styles.tutorAvatarContainer}>
+                                            <Text style={styles.tutorAvatar}>{tutor.avatar}</Text>
+                                        </View>
+                                        <View style={styles.tutorInfo}>
+                                            <Text style={[
+                                                styles.tutorName, 
+                                                { color: theme.text }, 
+                                                selectedTutor === tutor.id && { color: theme.primary }
+                                            ]}>{tutor.name}</Text>
+                                            <Text style={[styles.tutorDesc, { color: theme.textSecondary }]} numberOfLines={2}>
+                                                {tutor.personality}
+                                            </Text>
+                                        </View>
+                                        {selectedTutor === tutor.id && (
+                                            <Ionicons name="checkmark-circle" size={24} color={theme.primary} />
+                                        )}
                                     </TouchableOpacity>
                                 ))}
-                                <TouchableOpacity
-                                    style={[
-                                        styles.gridItem,
-                                        { borderColor: theme.border, backgroundColor: theme.background },
-                                        grade === 13 && [styles.gridItemActive, { borderColor: theme.primary, backgroundColor: theme.primary + '20' }]
-                                    ]}
-                                    onPress={() => setGrade(13)}
-                                >
-                                    <Text style={[styles.gridItemText, { color: theme.textSecondary }, grade === 13 && [styles.gridItemTextActive, { color: theme.primary }]]}>
-                                        College
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </Animated.View>
-                    )}
+                            </Animated.View>
+                        )}
+                    </ScrollView>
 
-                    {step === 4 && (
-                        <Animated.View entering={FadeInRight} exiting={FadeOutLeft} style={styles.stepContainer}>
-                            <Text style={styles.title}>Choose your AI Tutor</Text>
-                            <Text style={styles.subtitle}>Who matches your learning style best?</Text>
-
-                            {aiTutors.map((tutor) => (
-                                <TouchableOpacity
-                                    key={tutor.id}
-                                    style={[
-                                        styles.tutorCard,
-                                        { borderColor: theme.border, backgroundColor: theme.background },
-                                        selectedTutor === tutor.id && [styles.tutorCardActive, { borderColor: theme.primary, backgroundColor: theme.primary + '20' }]
-                                    ]}
-                                    onPress={() => setSelectedTutorId(tutor.id)}
-                                >
-                                    <Text style={styles.tutorAvatar}>{tutor.avatar}</Text>
-                                    <View style={styles.tutorInfo}>
-                                        <Text style={[styles.tutorName, { color: theme.text }, selectedTutor === tutor.id && [styles.tutorNameActive, { color: theme.primary }]]}>{tutor.name}</Text>
-                                        <Text style={[styles.tutorDesc, { color: theme.textSecondary }]} numberOfLines={2}>
-                                            {tutor.personality}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            ))}
-                        </Animated.View>
-                    )}
-                </ScrollView>
-
-                <TouchableOpacity style={[styles.button, { backgroundColor: theme.primary, shadowColor: theme.primary }]} onPress={handleNext}>
-                    <Text style={styles.buttonText}>{step === 4 ? "Let's Begin" : "Continue"}</Text>
-                </TouchableOpacity>
-
-                {step === 1 && (
-                    <TouchableOpacity onPress={() => Alert.alert("Coming Soon", "Password reset is not yet available.")}>
-                        <Text style={[styles.linkText, { color: theme.primary }]}>Forgot Password?</Text>
-                    </TouchableOpacity>
-                )}
-            </View>
+                    <View style={styles.footer}>
+                        <Button 
+                            title={step === 4 ? "Complete Setup" : "Continue"} 
+                            onPress={handleNext}
+                            variant="primary"
+                            size="large"
+                            style={styles.nextButton}
+                        />
+                        
+                        {step === 1 && (
+                            <TouchableOpacity 
+                                style={styles.forgotPassword}
+                                onPress={() => Alert.alert("Reset Password", "A recovery link has been sent to your email (Demo).")}
+                            >
+                                <Text style={[styles.forgotPasswordText, { color: theme.textMuted }]}>Forgot Password?</Text>
+                            </TouchableOpacity>
+                        )}
+                    </View>
+                </Animated.View>
+            </SafeAreaView>
         </KeyboardAvoidingView>
     );
 }
 
+// Adding a simple SafeAreaView wrapper since it's commonly used
+const SafeAreaView: React.FC<{ children: React.ReactNode, style?: any }> = ({ children, style }) => (
+    <View style={[{ flex: 1, paddingTop: Platform.OS === 'ios' ? 50 : 20 }, style]}>{children}</View>
+);
+
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#f0f2f5', justifyContent: 'center', padding: 20 },
-    card: { backgroundColor: 'white', padding: 30, borderRadius: 24, paddingVertical: 40, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 15, elevation: 8, flex: 1, maxHeight: '85%' },
-    backButton: { position: 'absolute', top: 20, left: 20, zIndex: 10 },
-    indicatorContainer: { flexDirection: 'row', justifyContent: 'center', marginBottom: 30, gap: 8, marginTop: 10 },
-    indicator: { width: 40, height: 6, borderRadius: 3, backgroundColor: '#E5E7EB' },
-    indicatorActive: { backgroundColor: '#3B82F6' },
+    container: { flex: 1 },
+    safeArea: { flex: 1, paddingHorizontal: 20, justifyContent: 'center' },
+    card: { 
+        borderRadius: 24, 
+        borderWidth: 1,
+        padding: 24,
+        flex: 1,
+        maxHeight: '90%',
+        ...Platform.select({
+            ios: { shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 20, shadowOffset: { width: 0, height: 10 } },
+            android: { elevation: 4 },
+            web: { shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 20, shadowOffset: { width: 0, height: 10 } }
+        })
+    },
+    cardHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: 32,
+    },
+    backButton: {
+        padding: 4,
+    },
+    indicatorContainer: { 
+        flexDirection: 'row', 
+        gap: 6,
+    },
+    indicator: { 
+        width: 12, 
+        height: 6, 
+        borderRadius: 3, 
+    },
+    scrollContent: { 
+        flexGrow: 1,
+        paddingBottom: 20,
+    },
     stepContainer: { flex: 1 },
-    logoContainer: { alignItems: 'center', marginBottom: 20 },
-    customLogo: { width: 100, height: 100, resizeMode: 'contain' },
-    title: { fontSize: 26, fontWeight: '800', color: '#1F2937', marginBottom: 10, textAlign: 'center' },
-    subtitle: { fontSize: 16, color: '#6B7280', marginBottom: 30, textAlign: 'center' },
-    input: { backgroundColor: '#F9FAFB', padding: 16, borderRadius: 12, marginBottom: 15, borderWidth: 1, borderColor: '#E5E7EB', fontSize: 16, color: '#1F2937' },
-    button: { backgroundColor: '#3B82F6', padding: 18, borderRadius: 12, marginTop: 20, shadowColor: '#3B82F6', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 },
-    buttonText: { color: 'white', textAlign: 'center', fontWeight: 'bold', fontSize: 18 },
-    linkText: { color: '#3B82F6', textAlign: 'center', marginTop: 20, fontSize: 15, fontWeight: '500' },
-    grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
-    gridItem: { paddingVertical: 14, paddingHorizontal: 24, borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB', backgroundColor: '#F9FAFB' },
-    gridItemActive: { borderColor: '#3B82F6', backgroundColor: '#EFF6FF' },
-    gridItemText: { fontSize: 16, color: '#4B5563', fontWeight: '600' },
-    gridItemTextActive: { color: '#3B82F6' },
-    tutorCard: { flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 16, borderWidth: 1, borderColor: '#E5E7EB', marginBottom: 12, backgroundColor: '#F9FAFB' },
-    tutorCardActive: { borderColor: '#3B82F6', backgroundColor: '#EFF6FF' },
-    tutorAvatar: { fontSize: 36, marginRight: 16 },
+    logoContainer: { 
+        alignItems: 'center', 
+        marginBottom: 24,
+        marginTop: 10,
+    },
+    brandName: {
+        fontSize: 22,
+        fontWeight: '800',
+        marginTop: 12,
+        letterSpacing: -0.5,
+    },
+    title: { 
+        fontSize: 28, 
+        fontWeight: '800', 
+        marginBottom: 12, 
+        textAlign: 'center',
+        letterSpacing: -0.5,
+    },
+    subtitle: { 
+        fontSize: 16, 
+        lineHeight: 24,
+        marginBottom: 32, 
+        textAlign: 'center',
+    },
+    inputGroup: {
+        marginBottom: 20,
+    },
+    inputLabel: {
+        fontSize: 14,
+        fontWeight: '600',
+        marginBottom: 8,
+        marginLeft: 4,
+    },
+    input: { 
+        padding: 16, 
+        borderRadius: 12, 
+        borderWidth: 1, 
+        fontSize: 16,
+    },
+    grid: { 
+        flexDirection: 'column',
+        gap: 12,
+    },
+    gridItem: { 
+        padding: 18, 
+        borderRadius: 14, 
+        borderWidth: 1, 
+        alignItems: 'center',
+    },
+    gridItemText: { 
+        fontSize: 16, 
+        fontWeight: '600' 
+    },
+    tutorCard: { 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        padding: 16, 
+        borderRadius: 16, 
+        borderWidth: 1, 
+        marginBottom: 12,
+    },
+    tutorAvatarContainer: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: '#FFFFFF',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 16,
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
+    },
+    tutorAvatar: { fontSize: 32 },
     tutorInfo: { flex: 1 },
-    tutorName: { fontSize: 18, fontWeight: '700', color: '#1F2937', marginBottom: 4 },
-    tutorNameActive: { color: '#1D4ED8' },
-    tutorDesc: { fontSize: 13, color: '#6B7280', lineHeight: 18 },
+    tutorName: { fontSize: 18, fontWeight: '700', marginBottom: 2 },
+    tutorDesc: { fontSize: 13, lineHeight: 18 },
+    footer: {
+        marginTop: 'auto',
+        paddingTop: 20,
+    },
+    nextButton: {
+        width: '100%',
+    },
+    forgotPassword: {
+        marginTop: 16,
+        alignItems: 'center',
+    },
+    forgotPasswordText: {
+        fontSize: 14,
+        fontWeight: '500',
+    }
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ViewStyle } from 'react-native';
+import { StyleSheet, ViewStyle, Platform } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useTheme } from '../lib/useTheme';
 
@@ -10,6 +10,9 @@ interface CardProps {
   delay?: number;
 }
 
+/**
+ * Premium Card component with refined shadows and layout
+ */
 export const Card: React.FC<CardProps> = ({ children, style, padding = 16, delay = 0 }) => {
   const theme = useTheme();
 
@@ -21,7 +24,8 @@ export const Card: React.FC<CardProps> = ({ children, style, padding = 16, delay
         {
           padding,
           backgroundColor: theme.card,
-          shadowColor: theme.shadow,
+          borderColor: theme.border,
+          borderWidth: 1, // Subtle border for definition
         },
         style
       ]}
@@ -33,12 +37,23 @@ export const Card: React.FC<CardProps> = ({ children, style, padding = 16, delay
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20, // increased for premium feel
-    shadowColor: '#8a9ec1', // softer shadow color
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 16,
-    elevation: 4,
+    borderRadius: 16, // Professional standard
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 2,
+      },
+      web: {
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 12,
+      },
+    }),
   },
 });
