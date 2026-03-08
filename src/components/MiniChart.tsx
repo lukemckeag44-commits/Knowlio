@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useTheme } from '../lib/useTheme';
+import { useTheme } from '@/lib/useTheme';
 import Svg, { Path, Circle, Line, Defs, LinearGradient, Stop } from 'react-native-svg';
 
 interface MiniChartProps {

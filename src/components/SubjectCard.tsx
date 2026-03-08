@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Subject } from '../lib/types';
-import { calculateWeightedAverage, getGradeColor, getGradeLetter } from '../lib/utils';
+import { Subject } from '@/lib/types';
+import { calculateWeightedAverage, getGradeColor, getGradeLetter } from '@/lib/utils';
 import { ProgressBar } from './ProgressBar';
 import { Card } from './Card';
 import { PressableScene } from './PressableScene';
-import { useTheme } from '../lib/useTheme';
+import { useTheme } from '@/lib/useTheme';
 
 interface SubjectCardProps {
   subject: Subject;

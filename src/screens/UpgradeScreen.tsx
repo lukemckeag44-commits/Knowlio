@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useAppStore } from '../lib/store';
-import { Card } from '../components/Card';
-import { Button } from '../components/Button';
-import { IntegrationCard } from '../components/IntegrationCard';
-import { useTheme } from '../lib/useTheme';
-import { PlanType } from '../lib/types';
+import { useAppStore } from '@/lib/store';
+import { Card } from '@/components/Card';
+import { Button } from '@/components/Button';
+import { IntegrationCard } from '@/components/IntegrationCard';
+import { useTheme } from '@/lib/useTheme';
+import { PlanType } from '@/lib/types';
 
 export const UpgradeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { user, setPlan } = useAppStore();

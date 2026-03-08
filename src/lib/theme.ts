@@ -1,3 +1,7 @@
+/**
+ * Professional Theme Definition for Knowlio
+ * A sophisticated, academic-focused palette with deep blues and crisp accents.
+ */
 export const lightTheme = {
     background: '#F8FAFC', // Slate 50 - Cleaner background
     card: '#FFFFFF',
@@ -12,7 +16,7 @@ export const lightTheme = {
     danger: '#DC2626', // Red 600
     border: '#E2E8F0', // Slate 200
     input: '#F1F5F9', // Slate 100
-    shadow: '#000000',
+    shadow: 'rgba(15, 23, 42, 0.08)',
     radius: {
         sm: 6,
         md: 10,
@@ -35,7 +39,7 @@ export const darkTheme = {
     danger: '#F87171', // Red 400
     border: '#1E293B', // Slate 800
     input: '#1E293B', // Slate 800
-    shadow: '#000000',
+    shadow: 'rgba(0, 0, 0, 0.3)',
     radius: {
         sm: 6,
         md: 10,

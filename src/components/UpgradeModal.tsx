@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Button } from './Button';
-import { PlanType } from '../lib/types';
-import { useTheme } from '../lib/useTheme';
+import { PlanType } from '@/lib/types';
+import { useTheme } from '@/lib/useTheme';
 
 interface UpgradeModalProps {
   visible: boolean;

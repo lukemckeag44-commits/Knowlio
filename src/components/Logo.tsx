@@ -14,7 +14,7 @@ export const Logo: React.FC<LogoProps> = ({ size = 40, style }) => {
     return (
         <View style={[styles.container, { width: size, height: size }, style]}>
             <Image
-                source={require('./icon.png')}
+                source={require('../../assets/icon.png')}
                 style={styles.logo}
                 resizeMode="contain"
             />

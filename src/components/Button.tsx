@@ -1,7 +1,14 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ViewStyle, ActivityIndicator } from 'react-native';
+import { 
+  TouchableOpacity, 
+  Text, 
+  StyleSheet, 
+  ViewStyle, 
+  ActivityIndicator, 
+  Platform 
+} from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
-import { useTheme } from '../lib/useTheme';
+import { useTheme } from '@/lib/useTheme';
 
 interface ButtonProps {
   title: string;
@@ -71,18 +78,18 @@ export const Button: React.FC<ButtonProps> = ({
   const getPadding = () => {
     switch (size) {
       case 'small': return { paddingVertical: 8, paddingHorizontal: 16 };
-      case 'medium': return { paddingVertical: 12, paddingHorizontal: 24 };
-      case 'large': return { paddingVertical: 16, paddingHorizontal: 32 };
-      default: return { paddingVertical: 12, paddingHorizontal: 24 };
+      case 'medium': return { paddingVertical: 14, paddingHorizontal: 24 };
+      case 'large': return { paddingVertical: 18, paddingHorizontal: 32 };
+      default: return { paddingVertical: 14, paddingHorizontal: 24 };
     }
   };
 
   const getFontSize = () => {
     switch (size) {
       case 'small': return 14;
-      case 'medium': return 15;
-      case 'large': return 17;
-      default: return 15;
+      case 'medium': return 16;
+      case 'large': return 18;
+      default: return 16;
     }
   };
 
@@ -99,6 +106,7 @@ export const Button: React.FC<ButtonProps> = ({
           backgroundColor: getBackgroundColor(),
           borderWidth: variant === 'outline' ? 1.5 : 0,
           borderColor: theme.primary,
+          borderRadius: 14,
           ...getPadding(),
         },
         animatedStyle,
@@ -121,13 +129,17 @@ export const Button: React.FC<ButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 10, // More professional, less "bubbly"
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 4 } },
+      android: { elevation: 2 },
+      web: { shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 4 } }
+    }),
   },
   text: {
-    fontWeight: '600',
+    fontWeight: '700',
     letterSpacing: -0.2, // Tighter letter spacing for premium look
   },
 });

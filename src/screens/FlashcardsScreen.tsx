@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, Modal, FlatList, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useAppStore } from '../lib/store';
-import { useTheme } from '../lib/useTheme';
-import { Card } from '../components/Card';
-import { Button } from '../components/Button';
-import { FlashCardViewer } from '../components/FlashCardViewer';
-import { getAIFlashcards } from '../lib/api';
-import { FlashCardDeck } from '../lib/types';
+import { useAppStore } from '@/lib/store';
+import { useTheme } from '@/lib/useTheme';
+import { Card } from '@/components/Card';
+import { Button } from '@/components/Button';
+import { FlashCardViewer } from '@/components/FlashCardViewer';
+import { getAIFlashcards } from '@/lib/api';
+import { FlashCardDeck } from '@/lib/types';
 
 export const FlashcardsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { flashCardDecks, addFlashCardDeck, addFlashCard, subjects, user } = useAppStore();

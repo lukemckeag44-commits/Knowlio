@@ -1,15 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Image } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Image, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Animated, { FadeInUp, FadeIn } from 'react-native-reanimated';
+import Animated, { FadeInUp, FadeIn, SlideInDown } from 'react-native-reanimated';
 import * as ImagePicker from 'expo-image-picker';
-import { useAppStore } from '../lib/store';
-import { Card } from '../components/Card';
-import { TutorSelector } from '../components/TutorSelector';
-import { getAIChatResponse } from '../lib/api';
-import { aiTutors } from '../lib/mockData';
-import { useTheme } from '../lib/useTheme';
+import { useAppStore } from '@/lib/store';
+import { TutorSelector } from '@/components/TutorSelector';
+import { getAIChatResponse } from '@/lib/api';
+import { aiTutors } from '@/lib/mockData';
+import { useTheme } from '@/lib/useTheme';
 
 export const ChatScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { user, chatMessages, addChatMessage, clearChat } = useAppStore();
@@ -91,7 +89,7 @@ export const ChatScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         {/* Header */}
         <View style={[styles.header, { backgroundColor: theme.card, borderBottomColor: theme.border }]}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerButton}>
-            <Ionicons name="chevron-back" size={24} color={theme.text} />
+            <Ionicons name="chevron-back" size={26} color={theme.text} />
           </TouchableOpacity>
           
           <TouchableOpacity 
@@ -117,15 +115,15 @@ export const ChatScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Tutor Selector Modal/Overlay */}
+        {/* Tutor Selector Overlay */}
         {showTutorSelector && (
-          <Animated.View entering={FadeIn} style={[styles.selectorOverlay, { backgroundColor: 'rgba(0,0,0,0.3)' }]}>
+          <Animated.View entering={FadeIn} style={[styles.selectorOverlay, { backgroundColor: 'rgba(0,0,0,0.4)' }]}>
             <TouchableOpacity style={{ flex: 1 }} onPress={() => setShowTutorSelector(false)} />
-            <View style={[styles.selectorContent, { backgroundColor: theme.card }]}>
+            <Animated.View entering={SlideInDown} style={[styles.selectorContent, { backgroundColor: theme.card }]}>
               <View style={[styles.selectorHandle, { backgroundColor: theme.border }]} />
               <Text style={[styles.selectorTitle, { color: theme.text }]}>Switch AI Tutor</Text>
               <TutorSelector onSelect={() => setShowTutorSelector(false)} />
-            </View>
+            </Animated.View>
           </Animated.View>
         )}
 
@@ -195,7 +193,7 @@ export const ChatScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           
           <View style={styles.inputRow}>
             <TouchableOpacity onPress={pickImage} style={styles.iconButton}>
-              <Ionicons name="camera-outline" size={24} color={theme.primary} />
+              <Ionicons name="camera-outline" size={26} color={theme.primary} />
             </TouchableOpacity>
             
             <TextInput
@@ -205,7 +203,7 @@ export const ChatScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
               value={inputText}
               onChangeText={setInputText}
               multiline
-              maxHeight={100}
+              maxHeight={120}
             />
             
             <TouchableOpacity 
@@ -216,7 +214,7 @@ export const ChatScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
                 { backgroundColor: (inputText.trim() || imageUri) ? theme.primary : theme.border }
               ]}
             >
-              <Ionicons name="arrow-up" size={20} color="#FFF" />
+              <Ionicons name="arrow-up" size={22} color="#FFF" />
             </TouchableOpacity>
           </View>
         </View>
@@ -233,126 +231,47 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
     borderBottomWidth: 1,
     zIndex: 10,
   },
-  headerButton: { padding: 8 },
-  tutorHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-  },
-  tutorAvatarContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#F1F5F9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  tutorAvatar: { fontSize: 20 },
-  tutorTextContainer: { marginRight: 6 },
-  tutorName: { fontSize: 15, fontWeight: '700' },
+  headerButton: { padding: 6 },
+  tutorHeader: { flexDirection: 'row', alignItems: 'center', flex: 1, justifyContent: 'center' },
+  tutorAvatarContainer: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#F1F5F9', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  tutorAvatar: { fontSize: 22 },
+  tutorTextContainer: { marginRight: 8 },
+  tutorName: { fontSize: 16, fontWeight: '800', letterSpacing: -0.2 },
   statusContainer: { flexDirection: 'row', alignItems: 'center' },
-  onlineDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#10B981', marginRight: 4 },
-  tutorStatus: { fontSize: 11, fontWeight: '600' },
+  onlineDot: { width: 7, height: 7, borderRadius: 3.5, backgroundColor: '#10B981', marginRight: 5 },
+  tutorStatus: { fontSize: 11, fontWeight: '700', opacity: 0.8 },
 
   messagesContainer: { flex: 1 },
-  messagesContent: { padding: 16, paddingBottom: 32 },
-  messageRow: { flexDirection: 'row', marginBottom: 16, maxWidth: '85%' },
+  messagesContent: { padding: 20, paddingBottom: 40 },
+  messageRow: { flexDirection: 'row', marginBottom: 20, maxWidth: '88%' },
   userRow: { alignSelf: 'flex-end', justifyContent: 'flex-end' },
   assistantRow: { alignSelf: 'flex-start' },
-  messageAvatarSmall: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#F1F5F9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-    alignSelf: 'flex-end',
-  },
-  messageBubble: {
-    padding: 14,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: 'transparent',
-  },
-  userBubble: {
-    borderBottomRightRadius: 4,
-  },
-  assistantBubble: {
-    borderBottomLeftRadius: 4,
-  },
-  messageText: { fontSize: 15, lineHeight: 22 },
+  messageAvatarSmall: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#F1F5F9', alignItems: 'center', justifyContent: 'center', marginRight: 10, alignSelf: 'flex-end', borderWidth: 1, borderColor: '#E2E8F0' },
+  messageBubble: { padding: 16, borderRadius: 20, borderWidth: 1, borderColor: 'transparent' },
+  userBubble: { borderBottomRightRadius: 4, ...Platform.select({ ios: { shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 8, shadowOffset: { width: 0, height: 4 } }, android: { elevation: 3 } }) },
+  assistantBubble: { borderBottomLeftRadius: 4 },
+  messageText: { fontSize: 16, lineHeight: 24, fontWeight: '500' },
   userText: { color: '#FFFFFF' },
 
-  typingBubble: {
-    padding: 14,
-    borderRadius: 18,
-    borderBottomLeftRadius: 4,
-    borderWidth: 1,
-  },
-  typingDots: { flexDirection: 'row', gap: 4 },
-  typingDot: { width: 6, height: 6, borderRadius: 3 },
+  typingBubble: { padding: 16, borderRadius: 20, borderBottomLeftRadius: 4, borderWidth: 1 },
+  typingDots: { flexDirection: 'row', gap: 5 },
+  typingDot: { width: 7, height: 7, borderRadius: 3.5 },
 
-  inputContainer: {
-    padding: 12,
-    paddingBottom: Platform.OS === 'ios' ? 24 : 12,
-    borderTopWidth: 1,
-  },
-  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  inputContainer: { padding: 16, paddingBottom: Platform.OS === 'ios' ? 32 : 16, borderTopWidth: 1 },
+  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   iconButton: { padding: 4 },
-  input: {
-    flex: 1,
-    borderRadius: 20,
-    borderWidth: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    paddingTop: 8,
-    fontSize: 15,
-    maxHeight: 100,
-  },
-  sendButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  imagePreviewContainer: {
-    marginBottom: 10,
-    position: 'relative',
-    width: 60,
-  },
-  imagePreview: { width: 60, height: 60, borderRadius: 8 },
-  removeImage: { position: 'absolute', top: -8, right: -8 },
+  input: { flex: 1, borderRadius: 24, borderWidth: 1, paddingHorizontal: 20, paddingVertical: 12, paddingTop: 12, fontSize: 16, maxHeight: 120 },
+  sendButton: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', ...Platform.select({ ios: { shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } }, android: { elevation: 2 } }) },
+  imagePreviewContainer: { marginBottom: 12, position: 'relative', width: 70 },
+  imagePreview: { width: 70, height: 70, borderRadius: 12 },
+  removeImage: { position: 'absolute', top: -10, right: -10, backgroundColor: '#FFF', borderRadius: 12 },
 
-  selectorOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    zIndex: 100,
-    justifyContent: 'flex-end',
-  },
-  selectorContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    padding: 20,
-    paddingBottom: 40,
-  },
-  selectorHandle: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
-  selectorTitle: {
-    fontSize: 18,
-    fontWeight: '800',
-    textAlign: 'center',
-    marginBottom: 20,
-  }
+  selectorOverlay: { ...StyleSheet.absoluteFillObject, zIndex: 100, justifyContent: 'flex-end' },
+  selectorContent: { borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 24, paddingBottom: 48, ...Platform.select({ ios: { shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 20, shadowOffset: { width: 0, height: -10 } }, android: { elevation: 10 } }) },
+  selectorHandle: { width: 40, height: 5, borderRadius: 2.5, alignSelf: 'center', marginBottom: 24, opacity: 0.5 },
+  selectorTitle: { fontSize: 22, fontWeight: '900', textAlign: 'center', marginBottom: 24, letterSpacing: -0.5 }
 });

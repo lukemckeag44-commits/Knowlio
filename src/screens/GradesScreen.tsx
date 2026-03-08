@@ -4,14 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInUp, FadeInDown, Layout } from 'react-native-reanimated';
-import { useAppStore } from '../lib/store';
-import { Card } from '../components/Card';
-import { Button } from '../components/Button';
-import { SubjectCard } from '../components/SubjectCard';
-import { ProgressBar } from '../components/ProgressBar';
-import { useTheme } from '../lib/useTheme';
-import { calculateWeightedAverage, calculateOverallAverage, getGradeColor, getGradeLetter, formatDate, analyzePatterns } from '../lib/utils';
-import { Assignment } from '../lib/types';
+import { useAppStore } from '@/lib/store';
+import { Card } from '@/components/Card';
+import { Button } from '@/components/Button';
+import { SubjectCard } from '@/components/SubjectCard';
+import { ProgressBar } from '@/components/ProgressBar';
+import { useTheme } from '@/lib/useTheme';
+import { calculateWeightedAverage, calculateOverallAverage, getGradeColor, getGradeLetter, formatDate, analyzePatterns } from '@/lib/utils';
+import { Assignment } from '@/lib/types';
 
 export const GradesScreen: React.FC<{ navigation: any; route: any }> = ({ navigation, route }) => {
   const { subjects, addSubject, addAssignment, deleteAssignment } = useAppStore();

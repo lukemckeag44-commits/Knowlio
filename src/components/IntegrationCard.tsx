@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from './Card';
-import { useAppStore } from '../lib/store';
-import { useTheme } from '../lib/useTheme';
+import { useAppStore } from '@/lib/store';
+import { useTheme } from '@/lib/useTheme';
 
 interface IntegrationCardProps {
   name: string;

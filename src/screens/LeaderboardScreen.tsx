@@ -4,8 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { FadeInUp, FadeIn, Layout } from 'react-native-reanimated';
-import { useAppStore } from '../lib/store';
-import { useTheme } from '../lib/useTheme';
+import { useAppStore } from '@/lib/store';
+import { useTheme } from '@/lib/useTheme';
 
 export function LeaderboardScreen() {
     const { user, leaderboard, achievements } = useAppStore();

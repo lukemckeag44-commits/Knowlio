@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useAppStore } from '../lib/store';
-import { Card } from '../components/Card';
-import { Button } from '../components/Button';
-import { ProgressBar } from '../components/ProgressBar';
-import { useTheme } from '../lib/useTheme';
-import { getAIWeaknessAnalysis } from '../lib/api';
-import { WeaknessAnalysis } from '../lib/types';
+import { useAppStore } from '@/lib/store';
+import { Card } from '@/components/Card';
+import { Button } from '@/components/Button';
+import { ProgressBar } from '@/components/ProgressBar';
+import { useTheme } from '@/lib/useTheme';
+import { getAIWeaknessAnalysis } from '@/lib/api';
+import { WeaknessAnalysis } from '@/lib/types';
 
 export const AnalyzeScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { user, subjects, incrementAIUsage } = useAppStore();

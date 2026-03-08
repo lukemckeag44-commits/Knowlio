@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, Alert, Linking, Modal, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useAppStore } from '../lib/store';
-import { useAuthStore } from '../lib/store';
-import { Card } from '../components/Card';
-import { TutorSelector } from '../components/TutorSelector';
-import { useTheme } from '../lib/useTheme';
+import { useAppStore } from '@/lib/store';
+import { useAuthStore } from '@/lib/store';
+import { Card } from '@/components/Card';
+import { TutorSelector } from '@/components/TutorSelector';
+import { useTheme } from '@/lib/useTheme';
 
 export const SettingsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const { user, toggleParentMode, setUser, darkMode, setDarkMode } = useAppStore();

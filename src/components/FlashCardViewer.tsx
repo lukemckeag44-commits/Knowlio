@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, interpolate } from 'react-native-reanimated';
-import { FlashCard, FlashCardDeck } from '../lib/types';
+import { FlashCard, FlashCardDeck } from '@/lib/types';
 import { Button } from './Button';
-import { useAppStore } from '../lib/store';
-import { useTheme } from '../lib/useTheme';
+import { useAppStore } from '@/lib/store';
+import { useTheme } from '@/lib/useTheme';
 
 const { width } = Dimensions.get('window');
 

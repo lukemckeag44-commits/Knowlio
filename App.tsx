@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -8,21 +8,21 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font';
 import { Ionicons, FontAwesome, MaterialIcons } from '@expo/vector-icons';
-import { useAuthStore, useAppStore } from './lib/store';
-import { useTheme } from './lib/useTheme';
-import { Logo } from './components/Logo';
+import { useAuthStore, useAppStore } from './src/lib/store';
+import { useTheme } from './src/lib/useTheme';
+import { Logo } from './src/components/Logo';
 
 // Screens
-import { DashboardScreen } from './screens/DashboardScreen';
-import { GradesScreen } from './screens/GradesScreen';
-import { AnalyzeScreen } from './screens/AnalyzeScreen';
-import { StudyPlanScreen } from './screens/StudyPlanScreen';
-import { ChatScreen } from './screens/ChatScreen';
-import { FlashcardsScreen } from './screens/FlashcardsScreen';
-import { UpgradeScreen } from './screens/UpgradeScreen';
-import { SettingsScreen } from './screens/SettingsScreen';
-import { LeaderboardScreen } from './screens/LeaderboardScreen';
-import LoginScreen from './screens/LoginScreen';
+import { DashboardScreen } from './src/screens/DashboardScreen';
+import { GradesScreen } from './src/screens/GradesScreen';
+import { AnalyzeScreen } from './src/screens/AnalyzeScreen';
+import { StudyPlanScreen } from './src/screens/StudyPlanScreen';
+import { ChatScreen } from './src/screens/ChatScreen';
+import { FlashcardsScreen } from './src/screens/FlashcardsScreen';
+import { UpgradeScreen } from './src/screens/UpgradeScreen';
+import { SettingsScreen } from './src/screens/SettingsScreen';
+import { LeaderboardScreen } from './src/screens/LeaderboardScreen';
+import LoginScreen from './src/screens/LoginScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -44,6 +44,7 @@ function TabNavigator() {
           ...Platform.select({
             ios: { shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: -4 } },
             android: { elevation: 8 },
+            web: { shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, shadowOffset: { width: 0, height: -4 } }
           }),
         },
         tabBarActiveTintColor: theme.primary,
@@ -59,7 +60,7 @@ function TabNavigator() {
         name="Dashboard"
         component={DashboardScreen}
         options={{
-          tabBarIcon: ({ color, size, focused }) => (
+          tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? "home" : "home-outline"} size={24} color={color} />
           ),
         }}
@@ -68,7 +69,7 @@ function TabNavigator() {
         name="Grades"
         component={GradesScreen}
         options={{
-          tabBarIcon: ({ color, size, focused }) => (
+          tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? "school" : "school-outline"} size={24} color={color} />
           ),
         }}
@@ -77,7 +78,7 @@ function TabNavigator() {
         name="Analyze"
         component={AnalyzeScreen}
         options={{
-          tabBarIcon: ({ color, size, focused }) => (
+          tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? "analytics" : "analytics-outline"} size={24} color={color} />
           ),
         }}
@@ -87,7 +88,7 @@ function TabNavigator() {
         component={StudyPlanScreen}
         options={{
           tabBarLabel: 'Plan',
-          tabBarIcon: ({ color, size, focused }) => (
+          tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? "calendar" : "calendar-outline"} size={24} color={color} />
           ),
         }}
@@ -97,7 +98,7 @@ function TabNavigator() {
         component={LeaderboardScreen}
         options={{
           tabBarLabel: 'Ranks',
-          tabBarIcon: ({ color, size, focused }) => (
+          tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? "trophy" : "trophy-outline"} size={24} color={color} />
           ),
         }}
@@ -106,7 +107,7 @@ function TabNavigator() {
         name="Settings"
         component={SettingsScreen}
         options={{
-          tabBarIcon: ({ color, size, focused }) => (
+          tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? "settings" : "settings-outline"} size={24} color={color} />
           ),
         }}

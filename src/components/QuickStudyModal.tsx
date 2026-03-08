@@ -4,9 +4,9 @@ import { Ionicons } from '@expo/vector-icons';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, withRepeat, withSequence } from 'react-native-reanimated';
 import { Button } from './Button';
 import { Card } from './Card';
-import { generateQuickStudyContent } from '../lib/aiResponses';
-import { useAppStore } from '../lib/store';
-import { useTheme } from '../lib/useTheme';
+import { generateQuickStudyContent } from '@/lib/aiResponses';
+import { useAppStore } from '@/lib/store';
+import { useTheme } from '@/lib/useTheme';
 
 interface QuickStudyModalProps {
   visible: boolean;

@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from './Card';
-import { aiTutors } from '../lib/mockData';
-import { useAppStore } from '../lib/store';
-import { useTheme } from '../lib/useTheme';
+import { aiTutors } from '@/lib/mockData';
+import { useAppStore } from '@/lib/store';
+import { useTheme } from '@/lib/useTheme';
 
 interface TutorSelectorProps {
   onSelect?: () => void;
