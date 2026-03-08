@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useMemo } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Subject } from '../lib/types';
 import { calculateWeightedAverage, getGradeColor, getGradeLetter } from '../lib/utils';
@@ -14,26 +14,37 @@ interface SubjectCardProps {
   delay?: number;
 }
 
-export const SubjectCard: React.FC<SubjectCardProps> = ({ subject, onPress, delay = 0 }) => {
-  const average = calculateWeightedAverage(subject.assignments);
+const SubjectCardComponent: React.FC<SubjectCardProps> = ({ subject, onPress, delay = 0 }) => {
   const theme = useTheme();
-  const gradeColor = getGradeColor(average);
 
-  const getIconName = (icon: string): keyof typeof Ionicons.glyphMap => {
-    const iconMap: Record<string, keyof typeof Ionicons.glyphMap> = {
-      calculator: 'calculator',
-      book: 'book',
-      flask: 'flask',
-      time: 'time',
-      language: 'language',
-      globe: 'globe',
-      musical_notes: 'musical-notes',
-      fitness: 'fitness',
-      brush: 'brush',
-      code: 'code-slash',
+  // Memoize grade calculations to prevent unnecessary re-renders
+  const { average, gradeColor, gradeLetter } = useMemo(() => {
+    const avg = calculateWeightedAverage(subject.assignments);
+    return {
+      average: avg,
+      gradeColor: getGradeColor(avg),
+      gradeLetter: getGradeLetter(avg),
     };
-    return iconMap[icon] || 'school';
-  };
+  }, [subject.assignments]);
+
+  // Memoize icon name mapping
+  const getIconName = useMemo(() => {
+    return (icon: string): keyof typeof Ionicons.glyphMap => {
+      const iconMap: Record<string, keyof typeof Ionicons.glyphMap> = {
+        calculator: 'calculator',
+        book: 'book',
+        flask: 'flask',
+        time: 'time',
+        language: 'language',
+        globe: 'globe',
+        musical_notes: 'musical-notes',
+        fitness: 'fitness',
+        brush: 'brush',
+        code: 'code-slash',
+      };
+      return iconMap[icon] || 'school';
+    };
+  }, []);
 
   return (
     <PressableScene onPress={onPress}>
@@ -50,7 +61,7 @@ export const SubjectCard: React.FC<SubjectCardProps> = ({ subject, onPress, dela
           </View>
           <View style={styles.gradeContainer}>
             <Text style={[styles.grade, { color: gradeColor }]}>{average > 0 ? `${average}%` : '--'}</Text>
-            <Text style={[styles.gradeLetter, { color: gradeColor }]}>{average > 0 ? getGradeLetter(average) : '--'}</Text>
+            <Text style={[styles.gradeLetter, { color: gradeColor }]}>{average > 0 ? gradeLetter : '--'}</Text>
           </View>
         </View>
         <View style={styles.progressContainer}>
@@ -60,6 +71,15 @@ export const SubjectCard: React.FC<SubjectCardProps> = ({ subject, onPress, dela
     </PressableScene>
   );
 };
+
+export const SubjectCard = React.memo(SubjectCardComponent, (prevProps, nextProps) => {
+  // Custom comparison to prevent re-renders if subject data hasn't changed
+  return (
+    prevProps.delay === nextProps.delay &&
+    prevProps.onPress === nextProps.onPress &&
+    JSON.stringify(prevProps.subject) === JSON.stringify(nextProps.subject)
+  );
+});
 
 const styles = StyleSheet.create({
   card: {
